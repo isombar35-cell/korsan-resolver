@@ -146,3 +146,58 @@ async def ban(
             "action": "ban",
             "error": str(e)
         }
+@app.get("/unban")
+async def unban(
+    chat_id: int,
+    username: str,
+    key: str = "",
+    x_resolver_key: str = Header(default="")
+):
+    if (
+        x_resolver_key != RESOLVER_KEY
+        and key != RESOLVER_KEY
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail="Unauthorized"
+        )
+
+    username = username.strip().lstrip("@")
+
+    if not username:
+        raise HTTPException(
+            status_code=400,
+            detail="Username gerekli"
+        )
+
+    try:
+        chat = await client.get_entity(chat_id)
+        user = await client.get_entity(username)
+
+        await client(
+            EditBannedRequest(
+                channel=chat,
+                participant=user,
+                banned_rights=ChatBannedRights(
+                    until_date=None
+                )
+            )
+        )
+
+        return {
+            "ok": True,
+            "action": "unban",
+            "user_id": user.id,
+            "username": getattr(
+                user,
+                "username",
+                username
+            )
+        }
+
+    except Exception as e:
+        return {
+            "ok": False,
+            "action": "unban",
+            "error": str(e)
+        }
