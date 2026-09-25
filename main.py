@@ -43,7 +43,6 @@ async def resolve(
     key: str = "",
     x_resolver_key: str = Header(default="")
 ):
-
     if (
         x_resolver_key != RESOLVER_KEY
         and key != RESOLVER_KEY
@@ -62,7 +61,6 @@ async def resolve(
         )
 
     try:
-
         entity = await client.get_entity(username)
 
         return {
@@ -86,7 +84,6 @@ async def resolve(
         }
 
     except Exception as e:
-
         return {
             "ok": False,
             "error": str(e)
@@ -100,7 +97,6 @@ async def ban(
     key: str = "",
     x_resolver_key: str = Header(default="")
 ):
-
     if (
         x_resolver_key != RESOLVER_KEY
         and key != RESOLVER_KEY
@@ -119,9 +115,7 @@ async def ban(
         )
 
     try:
-
         chat = await client.get_entity(chat_id)
-
         user = await client.get_entity(username)
 
         await client(
@@ -129,6 +123,7 @@ async def ban(
                 channel=chat,
                 participant=user,
                 banned_rights=ChatBannedRights(
+                    until_date=None,
                     view_messages=True
                 )
             )
@@ -146,7 +141,6 @@ async def ban(
         }
 
     except Exception as e:
-
         return {
             "ok": False,
             "action": "ban",
