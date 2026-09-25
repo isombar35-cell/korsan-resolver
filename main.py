@@ -37,10 +37,11 @@ async def home():
 @app.get("/resolve")
 async def resolve(
     username: str,
+    key: str = "",
     x_resolver_key: str = Header(default="")
 ):
 
-    if x_resolver_key != RESOLVER_KEY:
+    if x_resolver_key != RESOLVER_KEY and key != RESOLVER_KEY:
         raise HTTPException(
             status_code=403,
             detail="Unauthorized"
@@ -66,7 +67,6 @@ async def resolve(
         }
 
     except Exception as e:
-
         return {
             "ok": False,
             "error": str(e)
